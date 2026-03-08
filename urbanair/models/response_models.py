@@ -7,7 +7,15 @@ class HourlyPoint(BaseModel):
     aqi: float
     temperature: float
     humidity: float
+    wind_speed: float
     score: float
+    outdoor_score: float
+
+
+class ActivityRecommendation(BaseModel):
+    name: str
+    status: str
+    note: str
 
 
 class TwoHourWindow(BaseModel):
@@ -20,7 +28,9 @@ class DailySummary(BaseModel):
     city: str
     generated_at: datetime
     current_aqi: float
+    current_outdoor_score: float
     timeline: list[HourlyPoint]
     best_window: TwoHourWindow
     worst_window: TwoHourWindow
     insight: str
+    activities: list[ActivityRecommendation]

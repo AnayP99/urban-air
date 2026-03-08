@@ -4,321 +4,119 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ app_name }} | {{ city }}</title>
-  <style>
-    :root {
-      --bg: #0b0f14;
-      --panel: #121923;
-      --panel-soft: #1a2433;
-      --text: #ecf2f9;
-      --muted: #9aa9bd;
-      --line: #2b3849;
-      --green: #36d689;
-      --amber: #f4b63e;
-      --red: #ef6363;
-      --blue: #76adff;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
-
-    body {
-      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(1200px 500px at 15% -10%, #223149 0%, transparent 60%),
-        radial-gradient(900px 400px at 100% 0%, #18263b 0%, transparent 50%),
-        var(--bg);
-      overflow-x: hidden;
-    }
-
-    .shell {
-      min-height: 100dvh;
-      width: min(1080px, 94%);
-      margin: 0 auto;
-      padding: 1.2rem 0 1.2rem;
-      display: grid;
-      grid-template-rows: auto 1fr;
-      gap: 1rem;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 0.8rem;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(1.4rem, 2.5vw, 2rem);
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-
-    .subhead {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 0.9rem;
-      align-content: start;
-    }
-
-    .card {
-      background: linear-gradient(165deg, var(--panel), var(--panel-soft));
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 14px;
-      padding: 0.95rem;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .top-card {
-      grid-column: span 4;
-    }
-
-    .wide-card {
-      grid-column: span 12;
-    }
-
-    .kicker {
-      color: var(--muted);
-      font-size: 0.86rem;
-      margin-bottom: 0.28rem;
-    }
-
-    .big {
-      font-size: clamp(1.5rem, 2.4vw, 2.15rem);
-      font-weight: 700;
-      line-height: 1.2;
-    }
-
-    .badge {
-      display: inline-block;
-      margin-top: 0.45rem;
-      padding: 0.2rem 0.55rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      border: 1px solid transparent;
-    }
-
-    .badge.good {
-      color: #c6f6df;
-      border-color: rgba(54, 214, 137, 0.6);
-      background: rgba(54, 214, 137, 0.15);
-    }
-
-    .badge.okay {
-      color: #ffe5b2;
-      border-color: rgba(244, 182, 62, 0.6);
-      background: rgba(244, 182, 62, 0.15);
-    }
-
-    .badge.poor {
-      color: #ffd1d1;
-      border-color: rgba(239, 99, 99, 0.65);
-      background: rgba(239, 99, 99, 0.15);
-    }
-
-    .window {
-      font-size: 1.06rem;
-      font-weight: 600;
-      line-height: 1.5;
-    }
-
-    .tip {
-      margin-top: 0.55rem;
-      color: #d5e0ec;
-      font-size: 0.96rem;
-    }
-
-    .timeline-strip {
-      margin-top: 0.7rem;
-      display: grid;
-      grid-template-columns: repeat(24, minmax(56px, 1fr));
-      gap: 0.45rem;
-      overflow-x: auto;
-      padding-bottom: 0.35rem;
-      scrollbar-width: thin;
-    }
-
-    .time-block {
-      border-radius: 11px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 0.5rem 0.35rem;
-      text-align: center;
-      min-height: 76px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 0.15rem;
-      background: #1d2939;
-    }
-
-    .time-block.good {
-      background: linear-gradient(160deg, rgba(54, 214, 137, 0.24), rgba(54, 214, 137, 0.08));
-      border-color: rgba(54, 214, 137, 0.55);
-    }
-
-    .time-block.okay {
-      background: linear-gradient(160deg, rgba(244, 182, 62, 0.24), rgba(244, 182, 62, 0.08));
-      border-color: rgba(244, 182, 62, 0.55);
-    }
-
-    .time-block.poor {
-      background: linear-gradient(160deg, rgba(239, 99, 99, 0.24), rgba(239, 99, 99, 0.08));
-      border-color: rgba(239, 99, 99, 0.6);
-    }
-
-    .time-hour {
-      font-size: 0.72rem;
-      color: var(--muted);
-      letter-spacing: 0.15px;
-    }
-
-    .time-comfort {
-      font-size: 1rem;
-      font-weight: 700;
-    }
-
-    .time-label {
-      font-size: 0.72rem;
-      color: #dbe6f3;
-    }
-
-    .insight {
-      margin: 0.2rem 0 0;
-      color: #d5dfeb;
-      line-height: 1.6;
-      font-size: 0.97rem;
-    }
-
-    details {
-      margin-top: 0.7rem;
-      border-top: 1px solid var(--line);
-      padding-top: 0.6rem;
-    }
-
-    summary {
-      cursor: pointer;
-      color: var(--blue);
-      font-weight: 600;
-      font-size: 0.92rem;
-    }
-
-    .explain {
-      color: var(--muted);
-      margin-top: 0.52rem;
-      line-height: 1.55;
-      font-size: 0.9rem;
-    }
-
-    .error-card p {
-      margin: 0.35rem 0 0;
-    }
-
-    .error-text {
-      color: #ffc7c7;
-    }
-
-    @media (max-width: 980px) {
-      .top-card {
-        grid-column: span 6;
-      }
-    }
-
-    @media (max-width: 740px) {
-      .shell {
-        min-height: 100%;
-        padding-bottom: 1rem;
-      }
-
-      .top-card, .wide-card {
-        grid-column: span 12;
-      }
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ request.url_for('static', path='styles.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <main class="shell">
-    <header class="header">
-      <h1>{{ app_name }}</h1>
-      <div class="subhead">{{ city }} | Today</div>
+  <main class="app-shell">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">UrbanAir</p>
+        <h1>{{ city }} outdoor snapshot</h1>
+      </div>
+      <p class="subcopy">One-screen guidance for today.</p>
     </header>
 
     {% if summary %}
-    <section class="layout">
-      <article class="card top-card">
-        <div class="kicker">Air Quality Right Now</div>
-        <div class="big">{{ "%.0f"|format(summary.current_aqi) }} AQI</div>
-        <div class="badge {% if current_aqi_label == 'Good' %}good{% elif current_aqi_label == 'Moderate' %}okay{% else %}poor{% endif %}">
+    <section class="top-grid">
+      <article class="panel stat-panel">
+        <p class="panel-label">Air Right Now</p>
+        <div class="stat-line">
+          <strong>{{ "%.0f"|format(summary.current_aqi) }}</strong>
+          <span>AQI</span>
+        </div>
+        <span class="pill {{ current_aqi_tone }}">
           {{ current_aqi_label }}
+        </span>
+      </article>
+
+      <article class="panel stat-panel accent-panel">
+        <p class="panel-label">Outdoor Score</p>
+        <div class="stat-line">
+          <strong>{{ "%.1f"|format(summary.current_outdoor_score) }}</strong>
+          <span>/ 10</span>
+        </div>
+        <p class="panel-note">{{ current_outdoor_label }} for stepping outside now.</p>
+      </article>
+
+      <article class="panel stat-panel">
+        <p class="panel-label">Best Time Today</p>
+        <div class="time-line">{{ best_summary }}</div>
+        <p class="panel-note">Lowest combined outdoor stress in the next 24 hours.</p>
+      </article>
+
+      <article class="panel stat-panel">
+        <p class="panel-label">Time To Avoid</p>
+        <div class="time-line">{{ worst_summary }}</div>
+        <p class="panel-note">Most difficult conditions for stepping outside.</p>
+      </article>
+    </section>
+
+    <section class="middle-grid">
+      <article class="panel timeline-panel">
+        <div class="timeline-header">
+          <div>
+            <p class="panel-label">Next 24 Hours</p>
+            <h2>Outdoor timeline</h2>
+          </div>
+          <p class="panel-note">{{ action_message }}</p>
+        </div>
+        <div class="legend-row">
+          <span><i class="legend good"></i>Good</span>
+          <span><i class="legend moderate"></i>Moderate</span>
+          <span><i class="legend poor"></i>Poor</span>
+          <span><i class="legend best"></i>Best window</span>
+          <span><i class="legend worst"></i>Worst window</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="timelineChart" aria-label="24-hour outdoor score timeline"></canvas>
         </div>
       </article>
+    </section>
 
-      <article class="card top-card">
-        <div class="kicker">Best Time to Go Out</div>
-        <div class="window">{{ best_summary }}</div>
-        <div class="badge good">Better Window</div>
+    <section class="bottom-grid">
+      <article class="panel insight-panel">
+        <p class="panel-label">Urban Insight</p>
+        <p class="insight-copy">{{ summary.insight }}</p>
+        <details>
+          <summary>How UrbanAir works</summary>
+          <p class="details-copy">
+            Outdoor Score is based on AQI, temperature stress, and humidity stress.
+            AQI carries the highest weight, because breathing conditions matter most.
+          </p>
+        </details>
       </article>
 
-      <article class="card top-card">
-        <div class="kicker">Time to Avoid</div>
-        <div class="window">{{ worst_summary }}</div>
-        <div class="badge poor">Harder Window</div>
-      </article>
-
-      <article class="card wide-card">
-        <div class="kicker">How Comfortable It Looks Today (Higher is Better)</div>
-        <div class="big">{{ current_comfort }}% Comfort Now</div>
-        <p class="tip">{{ action_message }}</p>
-        <div class="timeline-strip" aria-label="Hourly comfort timeline">
-          {% for slot in comfort_timeline %}
-          <div class="time-block {{ slot.category }}">
-            <div class="time-hour">{{ slot.time }}</div>
-            <div class="time-comfort">{{ slot.comfort }}%</div>
-            <div class="time-label">
-              {% if slot.category == "good" %}Good{% elif slot.category == "okay" %}Okay{% else %}Poor{% endif %}
+      <article class="panel activities-panel">
+        <p class="panel-label">Activity Recommendations</p>
+        <div class="activity-list">
+          {% for activity in summary.activities %}
+          <article class="activity-item">
+            <div>
+              <h3>{{ activity.name }}</h3>
+              <p>{{ activity.note }}</p>
             </div>
-          </div>
+            <span class="pill {{ activity.status|lower }}">{{ activity.status }}</span>
+          </article>
           {% endfor %}
         </div>
       </article>
-
-      <article class="card wide-card">
-        <div class="kicker">Urban Insight</div>
-        <p class="insight">{{ summary.insight }}</p>
-        <details>
-          <summary>How UrbanAir Decides This</summary>
-          <div class="explain">
-            We combine three factors every hour: air quality, temperature, and humidity.
-            Air quality is weighted highest because it impacts breathing most.
-            Then we compare every 2-hour block and show the most comfortable and least comfortable windows.
-          </div>
-        </details>
-      </article>
     </section>
+
+    <script id="timeline-data" type="application/json">{{ timeline_chart | tojson }}</script>
+    <script src="{{ request.url_for('static', path='chart.js') }}"></script>
     {% else %}
-    <section class="layout">
-      <article class="card wide-card error-card">
-        <div class="kicker">UrbanAir</div>
-        <p>Live data could not be loaded right now.</p>
-        {% if error_message %}
-        <p class="error-text">{{ error_message }}</p>
-        {% endif %}
-      </article>
+    <section class="panel error-panel">
+      <p class="panel-label">UrbanAir</p>
+      <h2>Live data is unavailable</h2>
+      {% if error_message %}
+      <p class="insight-copy">{{ error_message }}</p>
+      {% endif %}
     </section>
     {% endif %}
   </main>
-
 </body>
 </html>

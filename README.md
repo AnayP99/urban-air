@@ -1,33 +1,56 @@
-# UrbanAir MVP
+# UrbanAir
 
-UrbanAir helps people in Mumbai pick the best 2-hour window today to step outside, using:
-- AQI (WAQI)
-- Temperature (OpenWeather)
-- Humidity (OpenWeather)
+UrbanAir is a lightweight single-page web app that answers three questions at a glance:
 
-The interface is designed for simple interpretation: clear "best time", "avoid time", and a visual comfort trend.
+1. How bad is the air right now?
+2. When is the best time to go outside today?
+3. What should I do based on current conditions?
 
-## Highlights
-- FastAPI backend with Jinja2 templates
-- Dark, high-contrast, mobile-friendly UI
-- Hourly in-memory caching (no database)
-- Simple architecture for future multi-city expansion
-- Automatic OpenWeather fallback:
-  - Try `3.0/onecall`
-  - Fall back to `2.5/forecast` for free-tier keys
+The MVP focuses on Mumbai, uses live AQI and weather data, and keeps the interface readable on one screen.
 
-## How decision logic works
-UrbanAir calculates an hourly stress score:
+## Features
 
-`score = (normalized_AQI * 0.6) + (temperature_stress * 0.2) + (humidity_stress * 0.2)`
+- Current AQI card with plain-language severity
+- Outdoor Score on a 0-10 scale
+- Prominent Best Time Today and Time To Avoid cards
+- 24-hour timeline chart with good, moderate, and poor segments
+- Highlighted best and worst 2-hour windows
+- Rule-based Urban Insight with no AI APIs
+- Dynamic activity recommendations for:
+  - Walking
+  - Running
+  - Cycling
+  - Window Ventilation
+- In-memory 1-hour caching for fetched and computed results
 
-Lower score is better. The app computes rolling 2-hour windows and shows:
-- Best 2-hour window (lowest average score)
-- Worst 2-hour window (highest average score)
+## How Outdoor Score Works
 
-The UI emphasizes user-friendly labels and comfort percentage instead of raw math details.
+UrbanAir computes an internal stress score using:
 
-## Project structure
+`(normalized_AQI * 0.6) + (temperature_stress * 0.2) + (humidity_stress * 0.2)`
+
+That value is converted into a user-facing Outdoor Score from `0` to `10`, where:
+
+- `8-10` means conditions are generally good
+- `4.5-7.9` means conditions are moderate
+- `0-4.4` means conditions are poor
+
+AQI has the highest weight because breathing conditions matter most.
+
+## How Urban Insight Works
+
+Urban Insight is generated with simple rules based on:
+
+- current AQI severity
+- short-term AQI trend
+- temperature discomfort
+- humidity trapping pollutants
+- wind helping or failing to disperse pollution
+
+Examples include identifying when pollution is rising, when heat makes outdoor time harder, and when breezier conditions may improve air quality.
+
+## Project Structure
+
 ```text
 urbanair/
 |-- main.py
@@ -38,24 +61,38 @@ urbanair/
 |   |-- aqi_service.py
 |   |-- weather_service.py
 |   |-- scoring_service.py
-|   `-- insight_service.py
+|   |-- insight_service.py
+|   `-- activity_service.py
 |-- cache/
 |   `-- cache_manager.py
 |-- models/
 |   `-- response_models.py
-`-- templates/
-    `-- index.html
+|-- templates/
+|   `-- index.html
+`-- static/
+    |-- styles.css
+    `-- chart.js
 ```
 
-## Setup (Windows PowerShell)
+## Setup
+
+### 1. Create and activate a virtual environment
+
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-Copy-Item .env.example .env
 ```
 
-Edit `.env`:
+### 2. Install dependencies
+
+```powershell
+pip install -r requirements.txt
+```
+
+### 3. Configure environment variables
+
+Create `.env` from `.env.example` and set:
+
 ```env
 WAQI_API_KEY=your_waqi_token
 OPENWEATHER_API_KEY=your_openweather_api_key
@@ -63,15 +100,25 @@ APP_NAME=UrbanAir
 APP_DEBUG=false
 ```
 
-Run:
+## Running Locally
+
 ```powershell
 uvicorn urbanair.main:app --host 127.0.0.1 --port 8000
 ```
 
 Open:
-- `http://127.0.0.1:8000`
+
+`http://127.0.0.1:8000`
 
 ## Notes
-- Default city is Mumbai (`config.py`).
-- No database is used in MVP.
-- Cache is per-process memory with 1-hour TTL.
+
+- Default city is Mumbai.
+- No database is used in the MVP.
+- Cache is in-process memory with a 1-hour TTL.
+- OpenWeather falls back from `3.0/onecall` to `2.5/forecast` for free-tier compatibility.
+
+## Future Roadmap
+
+- Multi-city support with configurable routes and city metadata
+- Smarter historical trend handling
+- Native Android app focused on quick local notifications

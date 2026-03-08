@@ -51,6 +51,7 @@ class WeatherService:
                     "time": dt_local,
                     "temperature": float(item.get("temp", 0.0)),
                     "humidity": float(item.get("humidity", 0.0)),
+                    "wind_speed": float(item.get("wind_speed", 0.0)),
                 }
             )
         return out
@@ -83,6 +84,7 @@ class WeatherService:
                     "time": dt_local,
                     "temperature": float(main.get("temp", 0.0)),
                     "humidity": float(main.get("humidity", 0.0)),
+                    "wind_speed": float(item.get("wind", {}).get("speed", 0.0)),
                 }
             )
 
@@ -110,6 +112,13 @@ class WeatherService:
                         "time": start_time + timedelta(hours=step),
                         "temperature": round(float(temp), 1),
                         "humidity": round(float(humidity), 1),
+                        "wind_speed": round(
+                            float(
+                                start["wind_speed"]
+                                + (end["wind_speed"] - start["wind_speed"]) * ratio
+                            ),
+                            1,
+                        ),
                     }
                 )
 
@@ -120,6 +129,7 @@ class WeatherService:
                 "time": last["time"].replace(minute=0, second=0, microsecond=0),
                 "temperature": round(float(last["temperature"]), 1),
                 "humidity": round(float(last["humidity"]), 1),
+                "wind_speed": round(float(last["wind_speed"]), 1),
             }
         )
         out.sort(key=lambda x: x["time"])

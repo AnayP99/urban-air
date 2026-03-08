@@ -9,6 +9,7 @@ from fastapi.templating import Jinja2Templates
 from urbanair.cache.cache_manager import InMemoryTTLCache
 from urbanair.config import Settings, get_settings
 from urbanair.models.response_models import DailySummary
+from urbanair.services.activity_service import ActivityService
 from urbanair.services.aqi_service import AQIService
 from urbanair.services.insight_service import InsightService
 from urbanair.services.scoring_service import ScoringService
@@ -20,11 +21,23 @@ logger = logging.getLogger(__name__)
 cache_instance: InMemoryTTLCache | None = None
 
 
-def comfort_category(comfort: int) -> str:
-    if comfort >= 75:
+def timeline_category(outdoor_score: float) -> str:
+    if outdoor_score >= 7.0:
         return "good"
-    if comfort >= 50:
-        return "okay"
+    if outdoor_score >= 4.5:
+        return "moderate"
+    return "poor"
+
+
+def format_window(start: datetime, end: datetime) -> str:
+    return f"{start.strftime('%I:%M %p')} - {end.strftime('%I:%M %p')}"
+
+
+def aqi_tone(aqi_label: str) -> str:
+    if aqi_label == "Good":
+        return "good"
+    if aqi_label == "Moderate":
+        return "moderate"
     return "poor"
 
 
@@ -53,6 +66,7 @@ async def index(
                 aqi_service=AQIService(settings),
                 weather_service=WeatherService(settings),
                 scoring_service=scoring_service,
+                activity_service=ActivityService(),
             )
             summary = await insight_service.build_daily_summary(
                 city_name=settings.default_city_name,
@@ -66,42 +80,45 @@ async def index(
             error_message = "Live data is temporarily unavailable. Please try again shortly."
 
     timeline = summary.timeline if summary else []
-    comfort_points = [scoring_service.comfort_percent(point.score) for point in timeline]
-    current_comfort = comfort_points[0] if comfort_points else 0
     current_aqi_label = (
         scoring_service.aqi_label(summary.current_aqi)
         if summary
         else "Unavailable"
     )
+    current_aqi_tone = aqi_tone(current_aqi_label) if summary else "poor"
+    current_outdoor_label = (
+        scoring_service.outdoor_label(summary.current_outdoor_score)
+        if summary
+        else "Unavailable"
+    )
 
-    best_summary = None
-    worst_summary = None
-    action_message = None
+    best_summary = ""
+    worst_summary = ""
+    action_message = ""
     if summary:
-        best_summary = (
-            f"{summary.best_window.start.strftime('%I:%M %p')} to "
-            f"{summary.best_window.end.strftime('%I:%M %p')}"
-        )
-        worst_summary = (
-            f"{summary.worst_window.start.strftime('%I:%M %p')} to "
-            f"{summary.worst_window.end.strftime('%I:%M %p')}"
-        )
+        best_summary = format_window(summary.best_window.start, summary.best_window.end)
+        worst_summary = format_window(summary.worst_window.start, summary.worst_window.end)
         now = datetime.now(tz=settings.tz())
         if summary.best_window.start <= now <= summary.best_window.end:
-            action_message = "This is a good time to step outside."
+            action_message = "Conditions are favorable right now. A short outdoor trip makes sense."
         else:
             action_message = (
-                f"Plan outdoor activity around {summary.best_window.start.strftime('%I:%M %p')}."
+                f"The best part of the day starts around {summary.best_window.start.strftime('%I:%M %p')}."
             )
 
-    comfort_timeline = []
-    for idx, point in enumerate(timeline):
-        comfort_value = comfort_points[idx]
-        comfort_timeline.append(
+    best_start = summary.best_window.start if summary else None
+    best_end = summary.best_window.end if summary else None
+    worst_start = summary.worst_window.start if summary else None
+    worst_end = summary.worst_window.end if summary else None
+    timeline_chart = []
+    for point in timeline:
+        timeline_chart.append(
             {
-                "time": point.time.strftime("%I %p"),
-                "comfort": comfort_value,
-                "category": comfort_category(comfort_value),
+                "label": point.time.strftime("%I %p"),
+                "score": point.outdoor_score,
+                "category": timeline_category(point.outdoor_score),
+                "is_best": bool(best_start and best_end and best_start <= point.time < best_end),
+                "is_worst": bool(worst_start and worst_end and worst_start <= point.time < worst_end),
             }
         )
 
@@ -113,11 +130,12 @@ async def index(
             "city": settings.default_city_name,
             "summary": summary,
             "error_message": error_message,
-            "current_comfort": current_comfort,
             "current_aqi_label": current_aqi_label,
+            "current_aqi_tone": current_aqi_tone,
+            "current_outdoor_label": current_outdoor_label,
             "best_summary": best_summary,
             "worst_summary": worst_summary,
             "action_message": action_message,
-            "comfort_timeline": comfort_timeline,
+            "timeline_chart": timeline_chart,
         },
     )

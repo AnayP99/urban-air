@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from urbanair.models.response_models import HourlyPoint, TwoHourWindow
 
 
 class ScoringService:
-    # Tuned for a conservative "comfort outdoors" interpretation.
+    # Lower internal stress score is better; outdoor score is a user-facing 0-10 scale.
     MAX_AQI = 300.0
     IDEAL_TEMP_C = 24.0
     TEMP_RANGE_C = 14.0
@@ -32,17 +32,22 @@ class ScoringService:
         )
         return round(score, 4)
 
-    def comfort_percent(self, score: float) -> int:
-        # Score: lower is better. Comfort: higher is better.
-        return int(round((1 - self._clamp(score)) * 100))
+    def outdoor_score(self, score: float) -> float:
+        return round((1 - self._clamp(score)) * 10, 1)
 
-    def comfort_label(self, score: float) -> str:
-        comfort = self.comfort_percent(score)
-        if comfort >= 75:
+    def outdoor_label(self, outdoor_score: float) -> str:
+        if outdoor_score >= 7.0:
             return "Good"
-        if comfort >= 50:
-            return "Okay"
+        if outdoor_score >= 4.5:
+            return "Moderate"
         return "Poor"
+
+    def outdoor_category(self, outdoor_score: float) -> str:
+        if outdoor_score >= 7.0:
+            return "good"
+        if outdoor_score >= 4.5:
+            return "moderate"
+        return "poor"
 
     def aqi_label(self, aqi: float) -> str:
         if aqi <= 50:
@@ -78,7 +83,7 @@ class ScoringService:
             windows.append(
                 TwoHourWindow(
                     start=p1.time,
-                    end=p2.time,
+                    end=p1.time + timedelta(hours=2),
                     average_score=avg,
                 )
             )

@@ -1,0 +1,102 @@
+{% if summary %}
+<section class="top-grid">
+  <article class="panel stat-panel">
+    <p class="panel-label">Air Right Now</p>
+    <div class="stat-line">
+      <strong>{{ "%.0f"|format(summary.current_aqi) }}</strong>
+      <span>AQI</span>
+    </div>
+    <span class="pill {{ current_aqi_tone }}">{{ current_aqi_label }}</span>
+  </article>
+
+  <article class="panel stat-panel accent-panel">
+    <p class="panel-label">Outdoor Score</p>
+    <div class="stat-line">
+      <strong>{{ "%.1f"|format(summary.current_outdoor_score) }}</strong>
+      <span>/ 10</span>
+    </div>
+    <p class="panel-note">{{ current_outdoor_label }} for stepping outside now.</p>
+  </article>
+
+  <article class="panel stat-panel">
+    <p class="panel-label">Best Time Today</p>
+    <div class="time-line">{{ best_summary }}</div>
+    <p class="panel-note">Best 2-hour block for a short errand, walk, or commute.</p>
+  </article>
+
+  <article class="panel stat-panel">
+    <p class="panel-label">Time To Avoid</p>
+    <div class="time-line">{{ worst_summary }}</div>
+    <p class="panel-note">Most difficult conditions in the next 24 hours.</p>
+  </article>
+</section>
+
+<section class="middle-grid">
+  <article class="panel timeline-panel">
+    <div class="timeline-header">
+      <div>
+        <p class="panel-label">Next 24 Hours</p>
+        <h2>Outdoor timing timeline</h2>
+      </div>
+      <p class="panel-note">{{ action_message }}</p>
+    </div>
+    <div class="legend-row">
+      <span><i class="legend good"></i>Good</span>
+      <span><i class="legend moderate"></i>Moderate</span>
+      <span><i class="legend poor"></i>Poor</span>
+      <span><i class="legend best"></i>Best window</span>
+      <span><i class="legend worst"></i>Worst window</span>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="timelineChart" aria-label="24-hour outdoor score timeline"></canvas>
+    </div>
+    <p class="microcopy">{{ current_vs_next }}</p>
+  </article>
+</section>
+
+<section class="bottom-grid">
+  <article class="panel insight-panel">
+    <p class="panel-label">Urban Insight</p>
+    <p class="insight-copy">{{ summary.insight }}</p>
+    <div class="mini-grid">
+      <div class="mini-stat">
+        <span>Updated</span>
+        <strong>{{ generated_label }}</strong>
+      </div>
+      <div class="mini-stat">
+        <span>Source mix</span>
+        <strong>AQI + weather</strong>
+      </div>
+    </div>
+    <details>
+      <summary>How UrbanAir works</summary>
+      <p class="details-copy">
+        Outdoor Score blends AQI, temperature stress, and humidity stress so timing decisions are easier than reading raw tables.
+      </p>
+    </details>
+  </article>
+
+  <article class="panel activities-panel">
+    <p class="panel-label">Activity Recommendations</p>
+    <div class="activity-list">
+      {% for activity in summary.activities %}
+      <article class="activity-item">
+        <div>
+          <h3>{{ activity.name }}</h3>
+          <p>{{ activity.note }}</p>
+        </div>
+        <span class="pill {{ activity.status|lower }}">{{ activity.status }}</span>
+      </article>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+
+<script id="timeline-data" type="application/json">{{ timeline_chart | tojson }}</script>
+{% else %}
+<section class="panel error-panel">
+  <p class="panel-label">UrbanAir</p>
+  <h2>Live data is unavailable</h2>
+  <p class="insight-copy">{{ error_message }}</p>
+</section>
+{% endif %}

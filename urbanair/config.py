@@ -8,6 +8,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 class Settings(BaseSettings):
     app_name: str = Field(default="UrbanAir", alias="APP_NAME")
     debug: bool = Field(default=False, alias="APP_DEBUG")
+    site_url: str = Field(default="http://127.0.0.1:8000", alias="SITE_URL")
 
     waqi_api_key: str = Field(default="", alias="WAQI_API_KEY")
     openweather_api_key: str = Field(default="", alias="OPENWEATHER_API_KEY")
@@ -21,6 +22,8 @@ class Settings(BaseSettings):
     default_city_lat: float = 19.0760
     default_city_lon: float = 72.8777
     timezone: str = "Asia/Kolkata"
+    launch_city_count: int = 20
+    storage_path: str = Field(default="data/urbanair.db", alias="APP_STORAGE_PATH")
 
     cache_ttl_seconds: int = 3600
 

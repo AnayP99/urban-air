@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="shell hero hero-city">
+  <div class="hero-copy">
+    <p class="eyebrow">Retention layer</p>
+    <h1>Join the UrbanAir alerts waitlist.</h1>
+    <p class="hero-text">Start with simple AQI and best-time notifications before building full subscriptions or a mobile app.</p>
+  </div>
+  <aside class="panel hero-card">
+    <p class="panel-label">Starter release</p>
+    <h2>{{ waitlist_count }} people interested</h2>
+    <p class="hero-card-copy">{{ disclaimer }}</p>
+  </aside>
+</section>
+
+<section class="shell alerts-grid">
+  <article class="panel">
+    <p class="panel-label">Waitlist form</p>
+    <h2>Get notified when alerts launch</h2>
+    <form class="waitlist-form" data-city="{{ selected_city.slug }}">
+      <label>
+        Email
+        <input type="email" name="email" placeholder="you@example.com" required>
+      </label>
+      <label>
+        City
+        <select name="city_slug">
+          {% for city in all_cities %}
+          <option value="{{ city.slug }}" {% if city.slug == selected_city.slug %}selected{% endif %}>{{ city.name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <button class="button button-primary" type="submit">Join waitlist</button>
+      <p class="form-status" aria-live="polite">
+        {% if status == "success" %}You are on the waitlist.{% else %}We will use this to validate demand before building alerts.{% endif %}
+      </p>
+    </form>
+  </article>
+  <article class="panel">
+    <p class="panel-label">What alerts could include</p>
+    <ul class="feature-list">
+      <li>Best time to step out reminder</li>
+      <li>AQI got worse alert</li>
+      <li>AQI improved alert</li>
+      <li>Morning and evening summary</li>
+    </ul>
+  </article>
+  <article class="panel">
+    <p class="panel-label">Why this matters</p>
+    <p class="panel-note">If users save cities and join alerts, you have a much stronger path to both repeat traffic and future subscriptions.</p>
+  </article>
+</section>
+{% endblock %}

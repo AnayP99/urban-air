@@ -34,3 +34,13 @@ class DailySummary(BaseModel):
     worst_window: TwoHourWindow
     insight: str
     activities: list[ActivityRecommendation]
+
+
+class AlertSignupRequest(BaseModel):
+    email: str = Field(min_length=5, max_length=254)
+    city_slug: str = Field(min_length=2, max_length=64)
+
+
+class AnalyticsEventRequest(BaseModel):
+    event_name: str = Field(min_length=2, max_length=64)
+    city_slug: str | None = Field(default=None, max_length=64)

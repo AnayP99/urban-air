@@ -1,122 +1,118 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ app_name }} | {{ city }}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ request.url_for('static', path='styles.css') }}">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-</head>
-<body>
-  <main class="app-shell">
-    <header class="page-header">
-      <div>
-        <p class="eyebrow">UrbanAir</p>
-        <h1>{{ city }} outdoor snapshot</h1>
-      </div>
-      <p class="subcopy">One-screen guidance for today.</p>
-    </header>
+{% extends "base.html" %}
 
+{% block content %}
+<section class="shell hero hero-home">
+  <div class="hero-copy">
+    <p class="eyebrow">Daily outdoor timing for real city life</p>
+    <h1>Check AQI and the best time to step outside across major Indian cities.</h1>
+    <p class="hero-text">
+      UrbanAir turns air quality into a fast timing decision for commuters, families, and anyone trying to avoid the roughest outdoor window.
+    </p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="/cities/{{ city.slug }}">Open {{ city.name }} live page</a>
+      <a class="button button-secondary" href="/alerts">Join alerts waitlist</a>
+    </div>
+    <div class="city-strip">
+      {% for item in featured_cities[:8] %}
+      <a href="/cities/{{ item.slug }}">{{ item.name }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  <aside class="panel hero-card">
+    <p class="panel-label">Today's featured city</p>
+    <h2>{{ city.name }}</h2>
+    <p class="hero-card-copy">{{ city.intro }}</p>
     {% if summary %}
-    <section class="top-grid">
-      <article class="panel stat-panel">
-        <p class="panel-label">Air Right Now</p>
-        <div class="stat-line">
-          <strong>{{ "%.0f"|format(summary.current_aqi) }}</strong>
-          <span>AQI</span>
-        </div>
-        <span class="pill {{ current_aqi_tone }}">
-          {{ current_aqi_label }}
-        </span>
-      </article>
-
-      <article class="panel stat-panel accent-panel">
-        <p class="panel-label">Outdoor Score</p>
-        <div class="stat-line">
-          <strong>{{ "%.1f"|format(summary.current_outdoor_score) }}</strong>
-          <span>/ 10</span>
-        </div>
-        <p class="panel-note">{{ current_outdoor_label }} for stepping outside now.</p>
-      </article>
-
-      <article class="panel stat-panel">
-        <p class="panel-label">Best Time Today</p>
-        <div class="time-line">{{ best_summary }}</div>
-        <p class="panel-note">Lowest combined outdoor stress in the next 24 hours.</p>
-      </article>
-
-      <article class="panel stat-panel">
-        <p class="panel-label">Time To Avoid</p>
-        <div class="time-line">{{ worst_summary }}</div>
-        <p class="panel-note">Most difficult conditions for stepping outside.</p>
-      </article>
-    </section>
-
-    <section class="middle-grid">
-      <article class="panel timeline-panel">
-        <div class="timeline-header">
-          <div>
-            <p class="panel-label">Next 24 Hours</p>
-            <h2>Outdoor timeline</h2>
-          </div>
-          <p class="panel-note">{{ action_message }}</p>
-        </div>
-        <div class="legend-row">
-          <span><i class="legend good"></i>Good</span>
-          <span><i class="legend moderate"></i>Moderate</span>
-          <span><i class="legend poor"></i>Poor</span>
-          <span><i class="legend best"></i>Best window</span>
-          <span><i class="legend worst"></i>Worst window</span>
-        </div>
-        <div class="chart-wrap">
-          <canvas id="timelineChart" aria-label="24-hour outdoor score timeline"></canvas>
-        </div>
-      </article>
-    </section>
-
-    <section class="bottom-grid">
-      <article class="panel insight-panel">
-        <p class="panel-label">Urban Insight</p>
-        <p class="insight-copy">{{ summary.insight }}</p>
-        <details>
-          <summary>How UrbanAir works</summary>
-          <p class="details-copy">
-            Outdoor Score is based on AQI, temperature stress, and humidity stress.
-            AQI carries the highest weight, because breathing conditions matter most.
-          </p>
-        </details>
-      </article>
-
-      <article class="panel activities-panel">
-        <p class="panel-label">Activity Recommendations</p>
-        <div class="activity-list">
-          {% for activity in summary.activities %}
-          <article class="activity-item">
-            <div>
-              <h3>{{ activity.name }}</h3>
-              <p>{{ activity.note }}</p>
-            </div>
-            <span class="pill {{ activity.status|lower }}">{{ activity.status }}</span>
-          </article>
-          {% endfor %}
-        </div>
-      </article>
-    </section>
-
-    <script id="timeline-data" type="application/json">{{ timeline_chart | tojson }}</script>
-    <script src="{{ request.url_for('static', path='chart.js') }}"></script>
+    <div class="hero-metrics">
+      <div>
+        <span>AQI</span>
+        <strong>{{ "%.0f"|format(summary.current_aqi) }}</strong>
+      </div>
+      <div>
+        <span>Outdoor Score</span>
+        <strong>{{ "%.1f"|format(summary.current_outdoor_score) }}/10</strong>
+      </div>
+      <div>
+        <span>Best Time</span>
+        <strong>{{ best_summary }}</strong>
+      </div>
+    </div>
     {% else %}
-    <section class="panel error-panel">
-      <p class="panel-label">UrbanAir</p>
-      <h2>Live data is unavailable</h2>
-      {% if error_message %}
-      <p class="insight-copy">{{ error_message }}</p>
-      {% endif %}
-    </section>
+    <p class="panel-note">{{ error_message }}</p>
     {% endif %}
-  </main>
-</body>
-</html>
+  </aside>
+</section>
+
+<section class="shell city-grid-section">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">City pages</p>
+      <h2>Start with the places most likely to drive repeat checks.</h2>
+    </div>
+    <p class="section-copy">Each page is indexable, mobile friendly, and designed to answer "should I go now or wait?" in one glance.</p>
+  </div>
+  <div class="city-grid">
+    {% for item in featured_cities %}
+    <article class="panel city-card">
+      <p class="city-state">{{ item.state }}</p>
+      <h3><a href="/cities/{{ item.slug }}">{{ item.name }}</a></h3>
+      <p>{{ item.meta_description }}</p>
+      <div class="card-actions">
+        <a href="/cities/{{ item.slug }}">City page</a>
+        <a href="/compare/{{ item.slug }}">Compare now vs later</a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="shell trust-grid">
+  <article class="panel trust-card">
+    <p class="panel-label">Why people use UrbanAir</p>
+    <h2>Built for timing, not just raw AQI tables.</h2>
+    <p>{{ city.commuter_tip }}</p>
+    <p>{{ city.sensitive_tip }}</p>
+  </article>
+  <article class="panel trust-card">
+    <p class="panel-label">Why not generic AQI sites</p>
+    <h2>Because most people want an action, not a dashboard.</h2>
+    <ul class="feature-list">
+      <li>UrbanAir answers when to step out, not only what the AQI number is.</li>
+      <li>It combines AQI, heat, and humidity into one outdoor score.</li>
+      <li>It highlights the best and worst two-hour windows for real daily planning.</li>
+      <li>It is built around commute, walk, run, and ventilation decisions.</li>
+    </ul>
+  </article>
+  <article class="panel trust-card">
+    <p class="panel-label">Guides</p>
+    <h2>Explain AQI in plain language.</h2>
+    <div class="guide-list">
+      {% for guide in guide_links %}
+      <a href="/guides/{{ guide.slug }}">{{ guide.title }}</a>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+
+<section class="shell trust-grid">
+  <article class="panel trust-card saved-cities-panel">
+    <p class="panel-label">Come back faster</p>
+    <h2>Your saved cities live here on this device.</h2>
+    <div class="saved-cities-list" data-empty-message="Save a city once and it will show up here for quick return visits."></div>
+  </article>
+  <article class="panel trust-card">
+    <p class="panel-label">Return-use loop</p>
+    <h2>Designed for morning checks and pre-commute decisions.</h2>
+    <ul class="feature-list">
+      <li>Open your city page for the current score and the best time today.</li>
+      <li>Use compare pages when deciding whether to go now or wait.</li>
+      <li>Join the alert waitlist so we know which notification features to build first.</li>
+    </ul>
+  </article>
+  <article class="panel trust-card">
+    <p class="panel-label">Trust</p>
+    <h2>Clear inputs, no mystery black box.</h2>
+    <p>UrbanAir uses live AQI and weather inputs and explains how the outdoor score is calculated, so the guidance feels understandable instead of opaque.</p>
+  </article>
+</section>
+{% endblock %}

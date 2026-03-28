@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="shell hero hero-city">
+  <div class="hero-copy">
+    <p class="eyebrow">Guide</p>
+    <h1>{{ guide.title }}</h1>
+    <p class="hero-text">{{ guide.description }}</p>
+  </div>
+  <aside class="panel hero-card">
+    <p class="panel-label">Useful links</p>
+    <h2>City pages</h2>
+    <div class="guide-list">
+      {% for city in all_cities[:6] %}
+      <a href="/cities/{{ city.slug }}">{{ city.name }}</a>
+      {% endfor %}
+    </div>
+  </aside>
+</section>
+
+<section class="shell guide-body">
+  <article class="panel guide-panel">
+    {% for paragraph in guide.body %}
+    <p class="insight-copy">{{ paragraph }}</p>
+    {% endfor %}
+  </article>
+</section>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="shell hero hero-city">
+  <div class="hero-copy">
+    <p class="eyebrow">Compare timing</p>
+    <h1>Should you go outside in {{ city.name }} now or wait a bit?</h1>
+    <p class="hero-text">This page makes the timing choice clearer by summarizing the current stretch against the next few hours.</p>
+  </div>
+  <aside class="panel hero-card">
+    <p class="panel-label">Quick takeaway</p>
+    <h2>{{ city.name }}</h2>
+    <p class="hero-card-copy">{{ current_vs_next if current_vs_next else "Live data is temporarily unavailable." }}</p>
+  </aside>
+</section>
+
+<section class="shell compare-grid">
+  <article class="panel">
+    <p class="panel-label">Current window</p>
+    {% if summary %}
+    <h2>{{ "%.1f"|format(summary.current_outdoor_score) }}/10</h2>
+    <p class="panel-note">Current AQI is {{ "%.0f"|format(summary.current_aqi) }} and the current recommendation is {{ current_outdoor_label|lower }}.</p>
+    {% else %}
+    <p class="panel-note">{{ error_message }}</p>
+    {% endif %}
+  </article>
+  <article class="panel">
+    <p class="panel-label">Best window today</p>
+    <h2>{{ best_summary if best_summary else "Unavailable" }}</h2>
+    <p class="panel-note">Best for walks, quick errands, and any outdoor task you can delay a bit.</p>
+  </article>
+  <article class="panel">
+    <p class="panel-label">Avoid window</p>
+    <h2>{{ worst_summary if worst_summary else "Unavailable" }}</h2>
+    <p class="panel-note">Worst period for strenuous activity or long outdoor exposure.</p>
+  </article>
+  <article class="panel">
+    <p class="panel-label">Saved-cities hook</p>
+    <h2>Check again later</h2>
+    <p class="panel-note">Saving a city in your browser helps build the repeat-use loop without requiring accounts yet.</p>
+  </article>
+</section>
+
+<section class="shell dashboard-shell">
+  {% include "_city_dashboard.html" %}
+</section>
+{% endblock %}

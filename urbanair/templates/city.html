@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block head_extra %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for faq in city.faqs %}
+    {
+      "@type": "Question",
+      "name": {{ faq.question | tojson }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ faq.answer | tojson }}
+      }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="shell hero hero-city">
+  <div class="hero-copy">
+    <p class="eyebrow">{{ city.state }}</p>
+    <h1>{{ city.hero_title }}</h1>
+    <p class="hero-text">{{ city.intro }}</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="/compare/{{ city.slug }}">Compare now vs later</a>
+      <button class="button button-secondary save-city-button" type="button" data-city="{{ city.slug }}">Save {{ city.name }}</button>
+    </div>
+    <div class="meta-strip">
+      <span>Data page for {{ city.name }}</span>
+      <span>JSON API: <a href="/api/cities/{{ city.slug }}/summary">summary endpoint</a></span>
+      <span>Alerts: <a href="/alerts?city={{ city.slug }}">join waitlist</a></span>
+    </div>
+  </div>
+  <aside class="panel hero-card">
+    <p class="panel-label">Useful right now</p>
+    <h2>{{ city.name }} commuter note</h2>
+    <p class="hero-card-copy">{{ city.commuter_tip }}</p>
+    <div class="note-stack">
+      <div class="mini-stat">
+        <span>Sensitive-user note</span>
+        <strong>{{ city.sensitive_tip }}</strong>
+      </div>
+      <div class="mini-stat">
+        <span>Why this page is different</span>
+        <strong>It tells you when to go out, not just what the AQI number is.</strong>
+      </div>
+    </div>
+  </aside>
+</section>
+
+<section class="shell dashboard-shell">
+  {% include "_city_dashboard.html" %}
+</section>
+
+<section class="shell conversion-grid">
+  <article class="panel action-panel">
+    <p class="panel-label">What to do next</p>
+    <h2>Use this page like a decision tool.</h2>
+    <ul class="feature-list">
+      <li>Step out now if the current score is good and your activity is recommended.</li>
+      <li>Wait for the best two-hour window if conditions improve later.</li>
+      <li>Avoid the highlighted worst block for runs, cycling, or long exposure.</li>
+    </ul>
+  </article>
+  <article class="panel save-panel">
+    <p class="panel-label">Come back faster</p>
+    <h2>Saved cities for repeat visits.</h2>
+    <p class="panel-note">Save this city once and keep your most-used locations on this device for faster daily checks.</p>
+    <div class="saved-cities-list" data-empty-message="No saved cities yet. Use the Save button above to build your quick-access list."></div>
+  </article>
+  <article class="panel feedback-panel">
+    <p class="panel-label">Feedback</p>
+    <h2>Was this useful today?</h2>
+    <div class="feedback-actions">
+      <button type="button" class="button button-secondary feedback-button" data-feedback="yes">Yes</button>
+      <button type="button" class="button button-secondary feedback-button" data-feedback="no">No</button>
+    </div>
+    <p class="panel-note">{{ disclaimer }}</p>
+  </article>
+</section>
+
+<section class="shell seo-grid">
+  <article class="panel faq-panel">
+    <p class="panel-label">Why UrbanAir</p>
+    <h2>Made for action, not passive reading.</h2>
+    <ul class="feature-list">
+      <li>Generic AQI sites tell you the number. UrbanAir tells you the best time.</li>
+      <li>It combines AQI, heat, and humidity so the advice feels closer to reality.</li>
+      <li>It is tuned for commutes, walks, runs, and ventilation decisions.</li>
+      <li>It favors one-screen clarity over a cluttered data dashboard.</li>
+    </ul>
+  </article>
+  <article class="panel faq-panel">
+    <p class="panel-label">FAQ</p>
+    <h2>{{ city.name }} questions people search for</h2>
+    <div class="faq-list">
+      {% for faq in city.faqs %}
+      <details>
+        <summary>{{ faq.question }}</summary>
+        <p class="details-copy">{{ faq.answer }}</p>
+      </details>
+      {% endfor %}
+    </div>
+  </article>
+  <article class="panel sources-panel">
+    <p class="panel-label">Trust</p>
+    <h2>How this page stays practical</h2>
+    <p>{{ city.sensitive_tip }}</p>
+    <ul class="feature-list">
+      {% for source in data_sources %}
+      <li><a href="{{ source.url }}" target="_blank" rel="noreferrer">{{ source.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </article>
+</section>
+
+<section class="shell trust-grid">
+  <article class="panel related-panel">
+    <p class="panel-label">Related city pages</p>
+    <h2>Nearby places to compare</h2>
+    <div class="guide-list">
+      {% for item in related_cities %}
+      <a href="/cities/{{ item.slug }}">{{ item.name }}</a>
+      {% endfor %}
+    </div>
+  </article>
+  <article class="panel alert-panel">
+    <p class="panel-label">Alerts</p>
+    <h2>Want this city to ping you at the right time?</h2>
+    <p class="panel-note">Join the alert waitlist if you want morning summaries, better-window reminders, and rising-AQI warnings for {{ city.name }}.</p>
+    <a class="button button-primary" href="/alerts?city={{ city.slug }}">Join alerts waitlist</a>
+  </article>
+  <article class="panel compare-panel">
+    <p class="panel-label">Quick compare</p>
+    <h2>Not sure whether to go now?</h2>
+    <p class="panel-note">Use the compare page when you need a simple answer between stepping out immediately and waiting for a better block later today.</p>
+    <a class="button button-secondary" href="/compare/{{ city.slug }}">Open compare view</a>
+  </article>
+</section>
+{% endblock %}

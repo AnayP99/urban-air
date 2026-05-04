@@ -246,7 +246,7 @@ async def home(
 ):
     default_city = get_city(settings.default_city_slug) or list_cities()[0]
     summary, error_message = await load_city_summary(default_city, settings, cache)
-    featured_cities = list_cities()[: settings.launch_city_count]
+    featured_cities = list_cities()[: settings.featured_city_count]
     context = city_template_context(
         request=request,
         settings=settings,
@@ -338,12 +338,12 @@ async def alerts_page(
         "app_name": settings.app_name,
         "selected_city": selected_city,
         "all_cities": list_cities(),
-        "page_title": f"Alerts waitlist | {settings.app_name}",
-        "page_description": "Join the UrbanAir alert waitlist for AQI changes, best-time reminders, and commute-ready updates.",
+        "page_title": f"Alerts demo | {settings.app_name}",
+        "page_description": "Explore the UrbanAir alerts demo for AQI changes, best-time reminders, and commute-ready updates.",
         "canonical_url": build_page_url(settings, "/alerts"),
         "status": status,
         "waitlist_count": waitlist.count(),
-        "disclaimer": "Get first access to timing alerts for your city.",
+        "disclaimer": "This demo signup flow stores entries locally for project exploration.",
     }
     return templates.TemplateResponse(request=request, name="alerts.html", context=context)
 

@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     default_city_lat: float = 19.0760
     default_city_lon: float = 72.8777
     timezone: str = "Asia/Kolkata"
-    launch_city_count: int = 20
+    featured_city_count: int = 20
     storage_path: str = Field(default="data/urbanair.db", alias="APP_STORAGE_PATH")
 
     cache_ttl_seconds: int = 3600

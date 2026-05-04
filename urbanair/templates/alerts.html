@@ -3,21 +3,21 @@
 {% block content %}
 <section class="shell hero hero-city">
   <div class="hero-copy">
-    <p class="eyebrow">Retention layer</p>
-    <h1>Join the UrbanAir alerts waitlist.</h1>
-    <p class="hero-text">Start with simple AQI and best-time notifications before building full subscriptions or a mobile app.</p>
+    <p class="eyebrow">Feature demo</p>
+    <h1>UrbanAir alerts demo.</h1>
+    <p class="hero-text">This page demonstrates a lightweight alerts-style flow alongside the main city timing experience.</p>
   </div>
   <aside class="panel hero-card">
-    <p class="panel-label">Starter release</p>
-    <h2>{{ waitlist_count }} people interested</h2>
+    <p class="panel-label">Demo data</p>
+    <h2>{{ waitlist_count }} local signups captured</h2>
     <p class="hero-card-copy">{{ disclaimer }}</p>
   </aside>
 </section>
 
 <section class="shell alerts-grid">
   <article class="panel">
-    <p class="panel-label">Waitlist form</p>
-    <h2>Get notified when alerts launch</h2>
+    <p class="panel-label">Demo form</p>
+    <h2>Try the local alerts signup flow</h2>
     <form class="waitlist-form" data-city="{{ selected_city.slug }}">
       <label>
         Email
@@ -31,14 +31,14 @@
           {% endfor %}
         </select>
       </label>
-      <button class="button button-primary" type="submit">Join waitlist</button>
+      <button class="button button-primary" type="submit">Save demo signup</button>
       <p class="form-status" aria-live="polite">
-        {% if status == "success" %}You are on the waitlist.{% else %}We will use this to validate demand before building alerts.{% endif %}
+        {% if status == "success" %}Saved locally for this demo.{% else %}This form stores demo signups locally in the project database.{% endif %}
       </p>
     </form>
   </article>
   <article class="panel">
-    <p class="panel-label">What alerts could include</p>
+    <p class="panel-label">Demo features</p>
     <ul class="feature-list">
       <li>Best time to step out reminder</li>
       <li>AQI got worse alert</li>
@@ -47,8 +47,8 @@
     </ul>
   </article>
   <article class="panel">
-    <p class="panel-label">Why this matters</p>
-    <p class="panel-note">If users save cities and join alerts, you have a much stronger path to both repeat traffic and future subscriptions.</p>
+    <p class="panel-label">Why it is included</p>
+    <p class="panel-note">It adds a simple end-to-end interaction to the demo and shows how the project can support more than read-only city pages.</p>
   </article>
 </section>
 {% endblock %}

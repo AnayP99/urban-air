@@ -34,7 +34,7 @@
     <div class="meta-strip">
       <span>Data page for {{ city.name }}</span>
       <span>JSON API: <a href="/api/cities/{{ city.slug }}/summary">summary endpoint</a></span>
-      <span>Alerts: <a href="/alerts?city={{ city.slug }}">join waitlist</a></span>
+      <span>Demo: <a href="/alerts?city={{ city.slug }}">alerts page</a></span>
     </div>
   </div>
   <aside class="panel hero-card">
@@ -131,10 +131,10 @@
     </div>
   </article>
   <article class="panel alert-panel">
-    <p class="panel-label">Alerts</p>
-    <h2>Want this city to ping you at the right time?</h2>
-    <p class="panel-note">Join the alert waitlist if you want morning summaries, better-window reminders, and rising-AQI warnings for {{ city.name }}.</p>
-    <a class="button button-primary" href="/alerts?city={{ city.slug }}">Join alerts waitlist</a>
+    <p class="panel-label">Demo</p>
+    <h2>See the alerts page for {{ city.name }}</h2>
+    <p class="panel-note">The alerts page rounds out the demo with a simple signup flow and notification-style feature concept.</p>
+    <a class="button button-primary" href="/alerts?city={{ city.slug }}">Open alerts demo</a>
   </article>
   <article class="panel compare-panel">
     <p class="panel-label">Quick compare</p>

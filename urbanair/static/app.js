@@ -92,11 +92,11 @@ if (waitlistForm) {
         body: JSON.stringify(payload),
       });
       if (!response.ok) {
-        throw new Error("Unable to join waitlist");
+        throw new Error("Unable to save demo signup");
       }
       const body = await response.json();
       if (statusNode) {
-        statusNode.textContent = `You are on the waitlist for ${body.city}.`;
+        statusNode.textContent = `Demo signup saved locally for ${body.city}.`;
       }
       waitlistForm.reset();
       trackEvent("alert_signup", payload.city_slug);

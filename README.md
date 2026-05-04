@@ -2,15 +2,17 @@
 
 UrbanAir is a lightweight FastAPI app built to help Indian city residents answer one practical question fast: should I go outside now, or wait for a better window later today?
 
-This version turns the original Mumbai-only MVP into a multi-city, SEO-ready utility with:
+This repository is a public portfolio project and technical demo.
+
+The current codebase turns the original Mumbai-only MVP into a multi-city utility with:
 
 - dedicated city pages such as `/cities/mumbai` and `/cities/delhi`
 - compare pages such as `/compare/mumbai`
-- a simple alerts waitlist page at `/alerts`
+- an alerts demo page at `/alerts`
 - sitemap and robots routes for search indexing
 - a JSON summary endpoint at `/api/cities/{slug}/summary`
-- SQLite-backed starter analytics event capture and waitlist capture
-- mobile-first landing pages, trust copy, FAQ content, and monetization placeholders
+- SQLite-backed starter analytics event capture and demo signup capture
+- mobile-first pages, trust copy, and FAQ content
 
 ## Core Features
 
@@ -22,7 +24,7 @@ This version turns the original Mumbai-only MVP into a multi-city, SEO-ready uti
 - Activity recommendations for walking, running, cycling, and window ventilation
 - Multi-city support driven by a city registry
 - Internal links, canonical tags, FAQ markup, `sitemap.xml`, and `robots.txt`
-- Starter ad, affiliate, premium, and feedback surfaces built into the UI
+- Feedback and local UX experiments built into the UI
 
 ## Project Structure
 
@@ -95,6 +97,8 @@ APP_STORAGE_PATH=data/urbanair.db
 uvicorn urbanair.main:app --host 127.0.0.1 --port 8000
 ```
 
+This is the recommended way to use the project.
+
 Main routes:
 
 - `/`
@@ -110,31 +114,19 @@ Main routes:
 
 ## Product Notes
 
-- The launch target is India commuters and repeat-use city traffic.
-- A local SQLite file stores waitlist signups and analytics events for this starter release.
+- UrbanAir is a local-first code sample built for demonstration and portfolio use.
+- A local SQLite file stores demo signups and analytics events when you run the app yourself.
 - Cache is still in-process memory with a 1-hour TTL.
 - Set `APP_STORAGE_PATH` if you want the SQLite file somewhere specific.
 - OpenWeather falls back from `3.0/onecall` to `2.5/forecast` for free-tier compatibility.
 
-## Deploying On Render
+## Usage Notes
 
-A starter `render.yaml` is included.
-
-1. Push this repo to GitHub.
-2. Create a new Render Blueprint or Web Service.
-3. Point it at this repository.
-4. Set `WAQI_API_KEY`, `OPENWEATHER_API_KEY`, `SITE_URL`, and optionally `APP_STORAGE_PATH` in Render.
-5. Deploy.
-
-Recommended starter values:
-
-- plan: `Starter`
-- runtime: `Python`
-- start command: `uvicorn urbanair.main:app --host 0.0.0.0 --port $PORT`
+- The app is intended for local exploration and code review for now.
+- There is no deployment configuration included in this repository.
 
 ## What To Build Next
 
-- Replace SQLite waitlist storage with Postgres or a form/CRM integration.
-- Replace starter analytics storage with a proper analytics provider.
-- Add alert workers and scheduled digest jobs.
-- Add historical comparisons and paid subscriptions once repeat usage is proven.
+- Replace SQLite demo storage with a more durable data layer if needed.
+- Add alert workers and scheduled digest jobs if you want to expand the alerts feature set.
+- Add historical comparisons for richer city-level trend views.

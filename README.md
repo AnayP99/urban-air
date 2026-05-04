@@ -2,16 +2,14 @@
 
 UrbanAir is a lightweight FastAPI app built to help Indian city residents answer one practical question fast: should I go outside now, or wait for a better window later today?
 
-This repository is a public portfolio project and technical demo.
-
-The current codebase turns the original Mumbai-only MVP into a multi-city utility with:
+The application includes:
 
 - dedicated city pages such as `/cities/mumbai` and `/cities/delhi`
 - compare pages such as `/compare/mumbai`
-- an alerts demo page at `/alerts`
+- an alerts page at `/alerts`
 - sitemap and robots routes for search indexing
 - a JSON summary endpoint at `/api/cities/{slug}/summary`
-- SQLite-backed starter analytics event capture and demo signup capture
+- SQLite-backed analytics event capture and signup capture
 - mobile-first pages, trust copy, and FAQ content
 
 ## Core Features
@@ -24,7 +22,7 @@ The current codebase turns the original Mumbai-only MVP into a multi-city utilit
 - Activity recommendations for walking, running, cycling, and window ventilation
 - Multi-city support driven by a city registry
 - Internal links, canonical tags, FAQ markup, `sitemap.xml`, and `robots.txt`
-- Feedback and local UX experiments built into the UI
+- Feedback interactions built into the UI
 
 ## Project Structure
 
@@ -91,13 +89,11 @@ SITE_URL=http://127.0.0.1:8000
 APP_STORAGE_PATH=data/urbanair.db
 ```
 
-## Running Locally
+## Running
 
 ```powershell
 uvicorn urbanair.main:app --host 127.0.0.1 --port 8000
 ```
-
-This is the recommended way to use the project.
 
 Main routes:
 
@@ -112,21 +108,16 @@ Main routes:
 - `/sitemap.xml`
 - `/robots.txt`
 
-## Product Notes
+## Implementation Notes
 
-- UrbanAir is a local-first code sample built for demonstration and portfolio use.
-- A local SQLite file stores demo signups and analytics events when you run the app yourself.
+- A SQLite file stores signup data and analytics events.
 - Cache is still in-process memory with a 1-hour TTL.
 - Set `APP_STORAGE_PATH` if you want the SQLite file somewhere specific.
 - OpenWeather falls back from `3.0/onecall` to `2.5/forecast` for free-tier compatibility.
 
-## Usage Notes
+## Possible Extensions
 
-- The app is intended for local exploration and code review for now.
-- There is no deployment configuration included in this repository.
-
-## What To Build Next
-
-- Replace SQLite demo storage with a more durable data layer if needed.
-- Add alert workers and scheduled digest jobs if you want to expand the alerts feature set.
+- Replace SQLite storage with a more durable database layer.
+- Add alert workers and scheduled digest jobs.
 - Add historical comparisons for richer city-level trend views.
+- Expand analytics beyond the built-in event capture flow.

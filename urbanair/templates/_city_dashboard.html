@@ -1,102 +1,132 @@
 {% if summary %}
-<section class="top-grid">
-  <article class="panel stat-panel">
-    <p class="panel-label">Air Right Now</p>
-    <div class="stat-line">
-      <strong>{{ "%.0f"|format(summary.current_aqi) }}</strong>
-      <span>AQI</span>
-    </div>
-    <span class="pill {{ current_aqi_tone }}">{{ current_aqi_label }}</span>
-  </article>
-
-  <article class="panel stat-panel accent-panel">
-    <p class="panel-label">Outdoor Score</p>
-    <div class="stat-line">
-      <strong>{{ "%.1f"|format(summary.current_outdoor_score) }}</strong>
-      <span>/ 10</span>
-    </div>
-    <p class="panel-note">{{ current_outdoor_label }} for stepping outside now.</p>
-  </article>
-
-  <article class="panel stat-panel">
-    <p class="panel-label">Best Time Today</p>
-    <div class="time-line">{{ best_summary }}</div>
-    <p class="panel-note">Best 2-hour block for a short errand, walk, or commute.</p>
-  </article>
-
-  <article class="panel stat-panel">
-    <p class="panel-label">Time To Avoid</p>
-    <div class="time-line">{{ worst_summary }}</div>
-    <p class="panel-note">Most difficult conditions in the next 24 hours.</p>
-  </article>
-</section>
-
-<section class="middle-grid">
-  <article class="panel timeline-panel">
-    <div class="timeline-header">
-      <div>
-        <p class="panel-label">Next 24 Hours</p>
-        <h2>Outdoor timing timeline</h2>
+<div class="dashboard-grid">
+  <!-- Top row: 6 stat cards -->
+  <section class="stats-row">
+    <article class="panel stat-panel stat-aqi">
+      <p class="panel-label">Air Right Now</p>
+      <div class="stat-line">
+        <strong class="aqi-value aqi-{{ current_aqi_tone }}">{{ "%.0f"|format(summary.current_aqi) }}</strong>
+        <span>AQI</span>
       </div>
-      <p class="panel-note">{{ action_message }}</p>
-    </div>
-    <div class="legend-row">
-      <span><i class="legend good"></i>Good</span>
-      <span><i class="legend moderate"></i>Moderate</span>
-      <span><i class="legend poor"></i>Poor</span>
-      <span><i class="legend best"></i>Best window</span>
-      <span><i class="legend worst"></i>Worst window</span>
-    </div>
-    <div class="chart-wrap">
-      <canvas id="timelineChart" aria-label="24-hour outdoor score timeline"></canvas>
-    </div>
-    <p class="microcopy">{{ current_vs_next }}</p>
-  </article>
-</section>
+      <span class="pill {{ current_aqi_tone }}">{{ current_aqi_label }}</span>
+    </article>
 
-<section class="bottom-grid">
-  <article class="panel insight-panel">
-    <p class="panel-label">Urban Insight</p>
-    <p class="insight-copy">{{ summary.insight }}</p>
-    <div class="mini-grid">
-      <div class="mini-stat">
-        <span>Updated</span>
-        <strong>{{ generated_label }}</strong>
+    <article class="panel stat-panel accent-panel">
+      <p class="panel-label">Outdoor Score</p>
+      <div class="stat-line">
+        <strong>{{ "%.1f"|format(summary.current_outdoor_score) }}</strong>
+        <span>/ 10</span>
       </div>
-      <div class="mini-stat">
-        <span>Source mix</span>
-        <strong>AQI + weather</strong>
-      </div>
-    </div>
-    <details>
-      <summary>How UrbanAir works</summary>
-      <p class="details-copy">
-        Outdoor Score blends AQI, temperature stress, and humidity stress so timing decisions are easier than reading raw tables.
-      </p>
-    </details>
-  </article>
+      <p class="panel-note">{{ current_outdoor_label }} for stepping out now.</p>
+    </article>
 
-  <article class="panel activities-panel">
-    <p class="panel-label">Activity Recommendations</p>
-    <div class="activity-list">
-      {% for activity in summary.activities %}
-      <article class="activity-item">
+    <article class="panel stat-panel stat-best">
+      <p class="panel-label">Best Time Today</p>
+      <div class="time-line">{{ best_summary }}</div>
+      <p class="panel-note">Best 2-hour block for a walk, errand, or commute.</p>
+    </article>
+
+    <article class="panel stat-panel">
+      <p class="panel-label">Time to Avoid</p>
+      <div class="time-line">{{ worst_summary }}</div>
+      <p class="panel-note">Most difficult conditions in the next 24 hours.</p>
+    </article>
+
+    <article class="panel stat-panel">
+      <p class="panel-label">Temperature</p>
+      <div class="stat-line">
+        <strong>{{ "%.0f"|format(summary.current_temperature) }}</strong>
+        <span>°C</span>
+      </div>
+      <p class="panel-note">Current feels-like conditions.</p>
+    </article>
+
+    <article class="panel stat-panel">
+      <p class="panel-label">Humidity / Wind</p>
+      <div class="stat-line">
+        <strong>{{ "%.0f"|format(summary.current_humidity) }}</strong>
+        <span>%</span>
+      </div>
+      <p class="panel-note">Wind: {{ "%.1f"|format(summary.current_wind_speed) }} m/s</p>
+    </article>
+  </section>
+
+  <!-- Timeline chart -->
+  <section class="timeline-section">
+    <article class="panel timeline-panel">
+      <div class="timeline-header">
         <div>
-          <h3>{{ activity.name }}</h3>
-          <p>{{ activity.note }}</p>
+          <p class="panel-label">Next 24 Hours</p>
+          <h2>Outdoor timing timeline</h2>
         </div>
-        <span class="pill {{ activity.status|lower }}">{{ activity.status }}</span>
-      </article>
-      {% endfor %}
-    </div>
-  </article>
-</section>
+        <p class="panel-note">{{ action_message }}</p>
+      </div>
+      <div class="legend-row">
+        <span><i class="legend good" aria-hidden="true"></i>Good</span>
+        <span><i class="legend moderate" aria-hidden="true"></i>Moderate</span>
+        <span><i class="legend poor" aria-hidden="true"></i>Poor</span>
+        <span><i class="legend best" aria-hidden="true"></i>Best window</span>
+        <span><i class="legend worst" aria-hidden="true"></i>Avoid window</span>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="timelineChart" aria-label="24-hour outdoor score timeline" role="img"></canvas>
+      </div>
+      <p class="microcopy">{{ current_vs_next }}</p>
+    </article>
+  </section>
+
+  <!-- Bottom: Insight + Activities -->
+  <section class="insight-row">
+    <article class="panel insight-panel">
+      <p class="panel-label">Urban Insight</p>
+      <p class="insight-copy">{{ summary.insight }}</p>
+      <div class="mini-grid">
+        <div class="mini-stat">
+          <span>Updated</span>
+          <strong>{{ generated_label }}</strong>
+        </div>
+        <div class="mini-stat">
+          <span>Data sources</span>
+          <strong>AQI + weather</strong>
+        </div>
+      </div>
+      <details class="how-it-works">
+        <summary>How the Outdoor Score works</summary>
+        <p class="details-copy">
+          The Outdoor Score blends AQI (55%), temperature deviation from 24°C (20%),
+          humidity deviation from 50% (18%), and wind relief (7%) into a single 0–10 score.
+          Higher is better.
+        </p>
+      </details>
+    </article>
+
+    <article class="panel activities-panel">
+      <p class="panel-label">Activity Recommendations</p>
+      <div class="activity-list">
+        {% for activity in summary.activities %}
+        <article class="activity-item">
+          <div class="activity-info">
+            <span class="activity-icon" aria-hidden="true">{{ activity.icon }}</span>
+            <div>
+              <h3>{{ activity.name }}</h3>
+              <p>{{ activity.note }}</p>
+            </div>
+          </div>
+          <span class="pill {{ activity.status | lower }}">{{ activity.status }}</span>
+        </article>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+</div>
 
 <script id="timeline-data" type="application/json">{{ timeline_chart | tojson }}</script>
+
 {% else %}
 <section class="panel error-panel">
   <p class="panel-label">UrbanAir</p>
-  <h2>Live data is unavailable</h2>
-  <p class="insight-copy">{{ error_message }}</p>
+  <h2>Live data is temporarily unavailable</h2>
+  <p class="insight-copy">{{ error_message or "Please try again in a few minutes." }}</p>
+  <a class="button button-secondary" href="javascript:location.reload()">Try again</a>
 </section>
 {% endif %}

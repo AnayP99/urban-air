@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 
+{% block breadcrumb %}
+<nav class="shell breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb-list">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item" aria-hidden="true">›</li>
+    <li class="breadcrumb-item" aria-current="page">Guides</li>
+  </ol>
+</nav>
+{% endblock %}
+
 {% block content %}
 <section class="shell hero hero-city">
   <div class="hero-copy">
@@ -8,11 +18,11 @@
     <p class="hero-text">{{ guide.description }}</p>
   </div>
   <aside class="panel hero-card">
-    <p class="panel-label">Useful links</p>
-    <h2>City pages</h2>
+    <p class="panel-label">Other guides</p>
+    <h2>Continue reading</h2>
     <div class="guide-list">
-      {% for city in all_cities[:6] %}
-      <a href="/cities/{{ city.slug }}">{{ city.name }}</a>
+      {% for g in all_guides %}
+      <a href="/guides/{{ g.slug }}">{{ g.title }}</a>
       {% endfor %}
     </div>
   </aside>
@@ -23,6 +33,27 @@
     {% for paragraph in guide.body %}
     <p class="insight-copy">{{ paragraph }}</p>
     {% endfor %}
+  </article>
+</section>
+
+<section class="shell trust-grid">
+  <article class="panel">
+    <p class="panel-label">Check your city</p>
+    <h2>See live outdoor conditions</h2>
+    <div class="guide-list">
+      {% for city_item in all_cities[:6] %}
+      <a href="/cities/{{ city_item.slug }}">{{ city_item.name }}</a>
+      {% endfor %}
+    </div>
+  </article>
+  <article class="panel">
+    <p class="panel-label">More guides</p>
+    <h2>Keep learning</h2>
+    <div class="guide-list">
+      {% for g in all_guides %}
+      <a href="/guides/{{ g.slug }}">{{ g.title }}</a>
+      {% endfor %}
+    </div>
   </article>
 </section>
 {% endblock %}

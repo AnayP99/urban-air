@@ -1,11 +1,27 @@
 {% extends "base.html" %}
 
+{% block breadcrumb %}
+<nav class="shell breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb-list">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item" aria-hidden="true">›</li>
+    <li class="breadcrumb-item"><a href="/cities/{{ city.slug }}">{{ city.name }}</a></li>
+    <li class="breadcrumb-item" aria-hidden="true">›</li>
+    <li class="breadcrumb-item" aria-current="page">Compare</li>
+  </ol>
+</nav>
+{% endblock %}
+
 {% block content %}
 <section class="shell hero hero-city">
   <div class="hero-copy">
-    <p class="eyebrow">Compare timing</p>
-    <h1>Should you go outside in {{ city.name }} now or wait a bit?</h1>
-    <p class="hero-text">This page makes the timing choice clearer by summarizing the current stretch against the next few hours.</p>
+    <p class="eyebrow">Go now or wait?</p>
+    <h1>{{ city.name }} — now vs later today.</h1>
+    <p class="hero-text">This page makes the timing choice clearer by comparing the current stretch against the next few hours and the best window.</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="/cities/{{ city.slug }}">Full city page</a>
+      <a class="button button-secondary" href="/">All cities</a>
+    </div>
   </div>
   <aside class="panel hero-card">
     <p class="panel-label">Quick takeaway</p>
@@ -14,12 +30,23 @@
   </aside>
 </section>
 
+{% if summary %}
+<section class="shell compare-verdict">
+  <article class="panel verdict-card {% if summary.current_outdoor_score >= 6.0 %}verdict-go{% else %}verdict-wait{% endif %}">
+    <p class="panel-label">Verdict</p>
+    <h2>{% if summary.current_outdoor_score >= 6.0 %}Go now — conditions are good.{% elif summary.current_outdoor_score >= 4.5 %}Conditions are okay — use your judgement.{% else %}Consider waiting for the best window.{% endif %}</h2>
+    <p class="panel-note">Based on current Outdoor Score of {{ "%.1f"|format(summary.current_outdoor_score) }}/10 and AQI {{ "%.0f"|format(summary.current_aqi) }}.</p>
+  </article>
+</section>
+{% endif %}
+
 <section class="shell compare-grid">
   <article class="panel">
-    <p class="panel-label">Current window</p>
+    <p class="panel-label">Right now</p>
     {% if summary %}
     <h2>{{ "%.1f"|format(summary.current_outdoor_score) }}/10</h2>
-    <p class="panel-note">Current AQI is {{ "%.0f"|format(summary.current_aqi) }} and the current recommendation is {{ current_outdoor_label|lower }}.</p>
+    <p class="panel-note">AQI {{ "%.0f"|format(summary.current_aqi) }} — {{ current_outdoor_label | lower }} conditions.
+    Temperature {{ "%.0f"|format(summary.current_temperature) }}°C, humidity {{ "%.0f"|format(summary.current_humidity) }}%.</p>
     {% else %}
     <p class="panel-note">{{ error_message }}</p>
     {% endif %}
@@ -27,17 +54,17 @@
   <article class="panel">
     <p class="panel-label">Best window today</p>
     <h2>{{ best_summary if best_summary else "Unavailable" }}</h2>
-    <p class="panel-note">Best for walks, quick errands, and any outdoor task you can delay a bit.</p>
+    <p class="panel-note">Optimal 2-hour block for walks, quick errands, and activities you can shift slightly.</p>
   </article>
   <article class="panel">
     <p class="panel-label">Avoid window</p>
     <h2>{{ worst_summary if worst_summary else "Unavailable" }}</h2>
-    <p class="panel-note">Worst period for strenuous activity or long outdoor exposure.</p>
+    <p class="panel-note">Worst period for strenuous activity or long outdoor exposure today.</p>
   </article>
   <article class="panel">
-    <p class="panel-label">Saved-cities hook</p>
-    <h2>Check again later</h2>
-    <p class="panel-note">Saving a city in your browser helps build the repeat-use loop without requiring accounts yet.</p>
+    <p class="panel-label">Trend</p>
+    <h2>{{ action_message if action_message else "Check the timeline below." }}</h2>
+    <p class="panel-note">{{ current_vs_next }}</p>
   </article>
 </section>
 

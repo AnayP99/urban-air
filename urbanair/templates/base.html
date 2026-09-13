@@ -6,38 +6,94 @@
   <title>{{ page_title }}</title>
   <meta name="description" content="{{ page_description }}">
   <link rel="canonical" href="{{ canonical_url }}">
+  <meta name="theme-color" content="#1a6e4f" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0d1a12" media="(prefers-color-scheme: dark)">
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{ page_title }}">
   <meta property="og:description" content="{{ page_description }}">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="{{ app_name }}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🌿</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ request.url_for('static', path='styles.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
   {% block head_extra %}{% endblock %}
 </head>
 <body data-city-slug="{% if city is defined and city %}{{ city.slug }}{% elif selected_city is defined and selected_city %}{{ selected_city.slug }}{% endif %}">
-  <div class="site-backdrop"></div>
-  <header class="site-header">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <header class="site-header" role="banner">
     <div class="shell site-header-inner">
-      <a href="/" class="brand-mark">
+      <a href="/" class="brand-mark" aria-label="UrbanAir home">
         <span>UrbanAir</span>
         <small>Outdoor timing for Indian cities</small>
       </a>
-      <nav class="site-nav" aria-label="Primary">
-        <a href="/">Cities</a>
-        <a href="/alerts">Demo</a>
-        <a href="/guides/understanding-aqi">Guides</a>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="/" {% if request.url.path == '/' %}aria-current="page"{% endif %}>Cities</a>
+        <a href="/alerts" {% if request.url.path == '/alerts' %}aria-current="page"{% endif %}>Alerts</a>
+        <a href="/guides/understanding-aqi" {% if request.url.path.startswith('/guides') %}aria-current="page"{% endif %}>Guides</a>
       </nav>
+      <div class="city-search-wrap">
+        <input
+          id="city-search"
+          class="city-search-input"
+          type="search"
+          placeholder="Search city…"
+          list="city-list"
+          autocomplete="off"
+          data-cities='{{ all_cities | map(attribute="slug") | list | tojson }}'
+          aria-label="Search for a city"
+        >
+        <datalist id="city-list">
+          {% for city_item in all_cities %}
+          <option value="{{ city_item.name }}" data-slug="{{ city_item.slug }}">{{ city_item.state }}</option>
+          {% endfor %}
+        </datalist>
+      </div>
     </div>
   </header>
-  <main>
+  <main id="main-content">
+    {% block breadcrumb %}{% endblock %}
     {% block content %}{% endblock %}
   </main>
-  <script src="{{ request.url_for('static', path='chart.js') }}"></script>
-  <script src="{{ request.url_for('static', path='app.js') }}"></script>
+  <footer class="site-footer" role="contentinfo">
+    <div class="shell footer-inner">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <p class="footer-brand">UrbanAir</p>
+          <p class="footer-tagline">AQI-based outdoor timing advisor for Indian cities. Combines air quality, temperature, and humidity into one actionable score.</p>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-heading">Cities</p>
+          <ul class="footer-links">
+            {% for city_item in all_cities[:8] %}
+            <li><a href="/cities/{{ city_item.slug }}">{{ city_item.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-heading">Guides</p>
+          <ul class="footer-links">
+            <li><a href="/guides/understanding-aqi">How to read AQI</a></li>
+            <li><a href="/guides/outdoor-safety">Outdoor safety on poor-air days</a></li>
+            <li><a href="/guides/commute-guide">Commute planning guide</a></li>
+          </ul>
+          <p class="footer-col-heading" style="margin-top:16px">Data</p>
+          <ul class="footer-links">
+            <li><a href="https://aqicn.org/api/" target="_blank" rel="noreferrer">World Air Quality Index</a></li>
+            <li><a href="https://openweathermap.org/api" target="_blank" rel="noreferrer">OpenWeather</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; {{ now.year if now is defined else '2026' }} UrbanAir. For informational purposes only — not medical advice.</p>
+      </div>
+    </div>
+  </footer>
+  <script type="module" src="{{ request.url_for('static', path='chart.js') }}"></script>
+  <script type="module" src="{{ request.url_for('static', path='app.js') }}"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

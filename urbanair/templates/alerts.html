@@ -1,54 +1,71 @@
 {% extends "base.html" %}
 
+{% block breadcrumb %}
+<nav class="shell breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb-list">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item" aria-hidden="true">›</li>
+    <li class="breadcrumb-item" aria-current="page">Air Alerts</li>
+  </ol>
+</nav>
+{% endblock %}
+
 {% block content %}
 <section class="shell hero hero-city">
   <div class="hero-copy">
-    <p class="eyebrow">Feature demo</p>
-    <h1>UrbanAir alerts demo.</h1>
-    <p class="hero-text">This page demonstrates a lightweight alerts-style flow alongside the main city timing experience.</p>
+    <p class="eyebrow">Stay ahead of changing air</p>
+    <h1>Get notified when air quality shifts.</h1>
+    <p class="hero-text">Sign up to receive timely updates for your city's cleanest outdoor windows, sudden pollution spikes, and daily commute forecasts.</p>
   </div>
   <aside class="panel hero-card">
-    <p class="panel-label">Demo data</p>
-    <h2>{{ waitlist_count }} local signups captured</h2>
-    <p class="hero-card-copy">{{ disclaimer }}</p>
+    <p class="panel-label">Community</p>
+    <h2>{{ waitlist_count }} commuter{% if waitlist_count != 1 %}s{% endif %} signed up</h2>
+    <p class="hero-card-copy">Notification preferences are saved per city. You can unsubscribe at any time.</p>
   </aside>
 </section>
 
 <section class="shell alerts-grid">
   <article class="panel">
-    <p class="panel-label">Demo form</p>
-    <h2>Try the local alerts signup flow</h2>
-    <form class="waitlist-form" data-city="{{ selected_city.slug }}">
+    <p class="panel-label">Sign up</p>
+    <h2>Get air quality alerts</h2>
+    <form class="waitlist-form" data-city="{{ selected_city.slug }}" novalidate>
       <label>
-        Email
-        <input type="email" name="email" placeholder="you@example.com" required>
+        Email address
+        <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
       </label>
       <label>
         City
         <select name="city_slug">
-          {% for city in all_cities %}
-          <option value="{{ city.slug }}" {% if city.slug == selected_city.slug %}selected{% endif %}>{{ city.name }}</option>
+          {% for city_item in all_cities %}
+          <option value="{{ city_item.slug }}"
+            {% if city_item.slug == selected_city.slug %}selected{% endif %}>{{ city_item.name }}</option>
           {% endfor %}
         </select>
       </label>
-      <button class="button button-primary" type="submit">Save demo signup</button>
-      <p class="form-status" aria-live="polite">
-        {% if status == "success" %}Saved locally for this demo.{% else %}This form stores demo signups locally in the project database.{% endif %}
+      <button class="button button-primary" type="submit">Subscribe for alerts</button>
+      <p class="form-status" aria-live="polite" role="status">
+        {% if status == "success" %}Subscribed successfully.{% else %}We will notify you about morning windows and notable air shifts.{% endif %}
       </p>
     </form>
   </article>
+
   <article class="panel">
-    <p class="panel-label">Demo features</p>
+    <p class="panel-label">What you receive</p>
+    <h2>Notification types</h2>
     <ul class="feature-list">
-      <li>Best time to step out reminder</li>
-      <li>AQI got worse alert</li>
-      <li>AQI improved alert</li>
-      <li>Morning and evening summary</li>
+      <li>🌅 <strong>Morning summary</strong> — today's best window and current AQI at 7 AM</li>
+      <li>📉 <strong>Air improving</strong> — pollution cleared, ideal window is open</li>
+      <li>📈 <strong>Air worsening</strong> — pollution rising, postpone strenuous outdoor plans</li>
+      <li>⏰ <strong>Best window reminder</strong> — 30-minute heads-up before your cleanest hours</li>
+      <li>🌆 <strong>Evening outlook</strong> — day recap and tomorrow's early morning forecast</li>
     </ul>
   </article>
+
   <article class="panel">
-    <p class="panel-label">Why it is included</p>
-    <p class="panel-note">It adds a simple end-to-end interaction to the demo and shows how the project can support more than read-only city pages.</p>
+    <p class="panel-label">Why alerts matter</p>
+    <h2>Timing you can act on.</h2>
+    <p class="panel-note">A daily average does not help when you need to step out in 20 minutes. Timely alerts help you plan walks, workouts, school runs, and commute routes around cleaner air windows.</p>
+    <p class="panel-note" style="margin-top: 10px">Simple, direct updates delivered when conditions change noticeably.</p>
   </article>
 </section>
 {% endblock %}

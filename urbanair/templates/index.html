@@ -4,13 +4,13 @@
 <section class="shell hero hero-home">
   <div class="hero-copy">
     <p class="eyebrow">Daily outdoor timing for real city life</p>
-    <h1>Check AQI and the best time to step outside across major Indian cities.</h1>
+    <h1>Check AQI and the best time to step outside.</h1>
     <p class="hero-text">
       UrbanAir turns air quality into a fast timing decision for commuters, families, and anyone trying to avoid the roughest outdoor window.
     </p>
     <div class="hero-actions">
-      <a class="button button-primary" href="/cities/{{ city.slug }}">Open {{ city.name }} live page</a>
-      <a class="button button-secondary" href="/alerts">View alerts demo</a>
+      <a class="button button-primary" href="/cities/{{ city.slug }}">View {{ city.name }} today</a>
+      <a class="button button-secondary" href="/alerts">Get air alerts</a>
     </div>
     <div class="city-strip">
       {% for item in featured_cities[:8] %}
@@ -26,30 +26,55 @@
     <div class="hero-metrics">
       <div>
         <span>AQI</span>
-        <strong>{{ "%.0f"|format(summary.current_aqi) }}</strong>
+        <strong class="aqi-{{ current_aqi_tone }}">{{ "%.0f"|format(summary.current_aqi) }}</strong>
+        <em class="pill {{ current_aqi_tone }}">{{ current_aqi_label }}</em>
       </div>
       <div>
         <span>Outdoor Score</span>
-        <strong>{{ "%.1f"|format(summary.current_outdoor_score) }}/10</strong>
+        <strong>{{ "%.1f"|format(summary.current_outdoor_score) }}<small>/10</small></strong>
       </div>
       <div>
         <span>Best Time</span>
-        <strong>{{ best_summary }}</strong>
+        <strong class="time-value">{{ best_summary }}</strong>
       </div>
     </div>
     {% else %}
-    <p class="panel-note">{{ error_message }}</p>
+    <p class="panel-note error-note">{{ error_message or "Live data unavailable." }}</p>
     {% endif %}
   </aside>
+</section>
+
+<section class="shell steps-section">
+  <div class="section-heading">
+    <p class="eyebrow">How UrbanAir works</p>
+    <h2>Three steps from AQI to action.</h2>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-number">1</div>
+      <h3>Check</h3>
+      <p>Open your city page. See the current AQI, Outdoor Score, and today's best two-hour window at a glance.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-number">2</div>
+      <h3>Decide</h3>
+      <p>Compare the current conditions against the best window. The timeline chart shows the full 24-hour picture.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-number">3</div>
+      <h3>Act</h3>
+      <p>Use the activity recommendations for your specific plan — walk, run, cycle, commute, or ventilate your home.</p>
+    </div>
+  </div>
 </section>
 
 <section class="shell city-grid-section">
   <div class="section-heading">
     <div>
       <p class="eyebrow">City pages</p>
-      <h2>Explore the city pages included in this demo.</h2>
+      <h2>Explore supported cities.</h2>
     </div>
-    <p class="section-copy">Each page is mobile friendly and designed to answer "should I go now or wait?" in one glance.</p>
+    <p class="section-copy">Each page answers "should I go now or wait?" in one glance. Fully mobile-friendly.</p>
   </div>
   <div class="city-grid">
     {% for item in featured_cities %}
@@ -69,50 +94,27 @@
 <section class="shell trust-grid">
   <article class="panel trust-card">
     <p class="panel-label">Why people use UrbanAir</p>
-    <h2>Built for timing, not just raw AQI tables.</h2>
-    <p>{{ city.commuter_tip }}</p>
-    <p>{{ city.sensitive_tip }}</p>
-  </article>
-  <article class="panel trust-card">
-    <p class="panel-label">Why not generic AQI sites</p>
-    <h2>Because most people want an action, not a dashboard.</h2>
+    <h2>Built for timing decisions, not just raw AQI tables.</h2>
     <ul class="feature-list">
-      <li>UrbanAir answers when to step out, not only what the AQI number is.</li>
-      <li>It combines AQI, heat, and humidity into one outdoor score.</li>
-      <li>It highlights the best and worst two-hour windows for real daily planning.</li>
-      <li>It is built around commute, walk, run, and ventilation decisions.</li>
+      <li>Answers <em>when</em> to step out, not only what the AQI number is.</li>
+      <li>Combines AQI, heat, and humidity into one Outdoor Score.</li>
+      <li>Highlights the best and worst two-hour windows for real daily planning.</li>
+      <li>Tuned for commute, walk, run, and ventilation decisions.</li>
     </ul>
   </article>
   <article class="panel trust-card">
     <p class="panel-label">Guides</p>
-    <h2>Explain AQI in plain language.</h2>
+    <h2>AQI explained in plain language.</h2>
     <div class="guide-list">
       {% for guide in guide_links %}
       <a href="/guides/{{ guide.slug }}">{{ guide.title }}</a>
       {% endfor %}
     </div>
   </article>
-</section>
-
-<section class="shell trust-grid">
   <article class="panel trust-card saved-cities-panel">
-    <p class="panel-label">Come back faster</p>
-    <h2>Your saved cities live here on this device.</h2>
-    <div class="saved-cities-list" data-empty-message="Save a city once and it will show up here for quick return visits."></div>
-  </article>
-  <article class="panel trust-card">
-    <p class="panel-label">Demo scope</p>
-    <h2>Includes a few extra feature concepts.</h2>
-    <ul class="feature-list">
-      <li>Open your city page for the current score and the best time today.</li>
-      <li>Use compare pages when deciding whether to go now or wait.</li>
-      <li>Browse the alerts demo page to see an additional feature concept.</li>
-    </ul>
-  </article>
-  <article class="panel trust-card">
-    <p class="panel-label">Trust</p>
-    <h2>Clear inputs, no mystery black box.</h2>
-    <p>UrbanAir uses live AQI and weather inputs and explains how the outdoor score is calculated, so the guidance feels understandable instead of opaque.</p>
+    <p class="panel-label">Quick access</p>
+    <h2>Your saved cities.</h2>
+    <div class="saved-cities-list" data-empty-message="Save a city from its page and it will appear here for quick return visits."></div>
   </article>
 </section>
 {% endblock %}

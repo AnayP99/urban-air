@@ -21,6 +21,18 @@
 </script>
 {% endblock %}
 
+{% block breadcrumb %}
+<nav class="shell breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb-list">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item" aria-hidden="true">›</li>
+    <li class="breadcrumb-item"><a href="/">Cities</a></li>
+    <li class="breadcrumb-item" aria-hidden="true">›</li>
+    <li class="breadcrumb-item" aria-current="page">{{ city.name }}</li>
+  </ol>
+</nav>
+{% endblock %}
+
 {% block content %}
 <section class="shell hero hero-city">
   <div class="hero-copy">
@@ -29,26 +41,23 @@
     <p class="hero-text">{{ city.intro }}</p>
     <div class="hero-actions">
       <a class="button button-primary" href="/compare/{{ city.slug }}">Compare now vs later</a>
-      <button class="button button-secondary save-city-button" type="button" data-city="{{ city.slug }}">Save {{ city.name }}</button>
+      <button class="button button-secondary save-city-button" type="button"
+              data-city="{{ city.slug }}" data-city-name="{{ city.name }}">Save {{ city.name }}</button>
     </div>
-    <div class="meta-strip">
-      <span>Data page for {{ city.name }}</span>
-      <span>JSON API: <a href="/api/cities/{{ city.slug }}/summary">summary endpoint</a></span>
-      <span>Demo: <a href="/alerts?city={{ city.slug }}">alerts page</a></span>
+    <div class="meta-strip" style="display: flex; gap: 1rem; font-size: 0.88rem; font-weight: 600; color: var(--text-muted); margin-top: var(--space-md);">
+      <span>Data for {{ city.name }}, {{ city.state }}</span>
+      <span>JSON: <a href="/api/cities/{{ city.slug }}/summary">summary API</a></span>
+      <span><a href="/alerts?city={{ city.slug }}">Air alerts</a></span>
     </div>
   </div>
   <aside class="panel hero-card">
-    <p class="panel-label">Useful right now</p>
+    <p class="panel-label">Local context</p>
     <h2>{{ city.name }} commuter note</h2>
     <p class="hero-card-copy">{{ city.commuter_tip }}</p>
     <div class="note-stack">
       <div class="mini-stat">
-        <span>Sensitive-user note</span>
+        <span>Sensitive users</span>
         <strong>{{ city.sensitive_tip }}</strong>
-      </div>
-      <div class="mini-stat">
-        <span>Why this page is different</span>
-        <strong>It tells you when to go out, not just what the AQI number is.</strong>
       </div>
     </div>
   </aside>
@@ -61,44 +70,35 @@
 <section class="shell conversion-grid">
   <article class="panel action-panel">
     <p class="panel-label">What to do next</p>
-    <h2>Use this page like a decision tool.</h2>
+    <h2>How to plan your day with this data</h2>
     <ul class="feature-list">
       <li>Step out now if the current score is good and your activity is recommended.</li>
       <li>Wait for the best two-hour window if conditions improve later.</li>
-      <li>Avoid the highlighted worst block for runs, cycling, or long exposure.</li>
+      <li>Avoid the highlighted worst block for runs, cycling, or long outdoor exposure.</li>
     </ul>
   </article>
   <article class="panel save-panel">
-    <p class="panel-label">Come back faster</p>
+    <p class="panel-label">Quick access</p>
     <h2>Saved cities for repeat visits.</h2>
     <p class="panel-note">Save this city once and keep your most-used locations on this device for faster daily checks.</p>
-    <div class="saved-cities-list" data-empty-message="No saved cities yet. Use the Save button above to build your quick-access list."></div>
+    <div class="saved-cities-list" data-empty-message="No saved cities yet. Use the Save button above."></div>
   </article>
   <article class="panel feedback-panel">
     <p class="panel-label">Feedback</p>
     <h2>Was this useful today?</h2>
     <div class="feedback-actions">
-      <button type="button" class="button button-secondary feedback-button" data-feedback="yes">Yes</button>
-      <button type="button" class="button button-secondary feedback-button" data-feedback="no">No</button>
+      <button type="button" class="button button-secondary feedback-button" data-feedback="yes">Yes, helpful</button>
+      <button type="button" class="button button-secondary feedback-button" data-feedback="no">Not really</button>
     </div>
+    <p class="panel-note" id="feedback-status"></p>
     <p class="panel-note">{{ disclaimer }}</p>
   </article>
 </section>
 
 <section class="shell seo-grid">
   <article class="panel faq-panel">
-    <p class="panel-label">Why UrbanAir</p>
-    <h2>Made for action, not passive reading.</h2>
-    <ul class="feature-list">
-      <li>Generic AQI sites tell you the number. UrbanAir tells you the best time.</li>
-      <li>It combines AQI, heat, and humidity so the advice feels closer to reality.</li>
-      <li>It is tuned for commutes, walks, runs, and ventilation decisions.</li>
-      <li>It favors one-screen clarity over a cluttered data dashboard.</li>
-    </ul>
-  </article>
-  <article class="panel faq-panel">
     <p class="panel-label">FAQ</p>
-    <h2>{{ city.name }} questions people search for</h2>
+    <h2>{{ city.name }} — questions people ask</h2>
     <div class="faq-list">
       {% for faq in city.faqs %}
       <details>
@@ -108,10 +108,20 @@
       {% endfor %}
     </div>
   </article>
+  <article class="panel faq-panel">
+    <p class="panel-label">Why UrbanAir</p>
+    <h2>Made for action, not passive reading.</h2>
+    <ul class="feature-list">
+      <li>Generic AQI sites tell you the number. UrbanAir tells you the best time.</li>
+      <li>It combines AQI, heat, and humidity so the advice feels closer to reality.</li>
+      <li>It is tuned for commutes, walks, runs, and ventilation decisions.</li>
+      <li>One-screen clarity over a cluttered data dashboard.</li>
+    </ul>
+  </article>
   <article class="panel sources-panel">
-    <p class="panel-label">Trust</p>
-    <h2>How this page stays practical</h2>
-    <p>{{ city.sensitive_tip }}</p>
+    <p class="panel-label">Data & Trust</p>
+    <h2>Clear inputs, no mystery.</h2>
+    <p class="panel-note">UrbanAir uses live AQI and weather data and explains how the Outdoor Score is calculated.</p>
     <ul class="feature-list">
       {% for source in data_sources %}
       <li><a href="{{ source.url }}" target="_blank" rel="noreferrer">{{ source.name }}</a></li>
@@ -122,8 +132,8 @@
 
 <section class="shell trust-grid">
   <article class="panel related-panel">
-    <p class="panel-label">Related city pages</p>
-    <h2>Nearby places to compare</h2>
+    <p class="panel-label">Nearby cities</p>
+    <h2>Compare with these places</h2>
     <div class="guide-list">
       {% for item in related_cities %}
       <a href="/cities/{{ item.slug }}">{{ item.name }}</a>
@@ -131,15 +141,15 @@
     </div>
   </article>
   <article class="panel alert-panel">
-    <p class="panel-label">Demo</p>
-    <h2>See the alerts page for {{ city.name }}</h2>
-    <p class="panel-note">The alerts page rounds out the demo with a simple signup flow and notification-style feature concept.</p>
-    <a class="button button-primary" href="/alerts?city={{ city.slug }}">Open alerts demo</a>
+    <p class="panel-label">Notifications</p>
+    <h2>Get notified when air improves</h2>
+    <p class="panel-note">Set up notifications for AQI shifts, morning summaries, and best-time reminders.</p>
+    <a class="button button-primary" href="/alerts?city={{ city.slug }}">Get air alerts</a>
   </article>
   <article class="panel compare-panel">
-    <p class="panel-label">Quick compare</p>
-    <h2>Not sure whether to go now?</h2>
-    <p class="panel-note">Use the compare page when you need a simple answer between stepping out immediately and waiting for a better block later today.</p>
+    <p class="panel-label">Not sure yet?</p>
+    <h2>Compare now vs later</h2>
+    <p class="panel-note">See whether waiting a short time today leads to noticeably better outdoor conditions.</p>
     <a class="button button-secondary" href="/compare/{{ city.slug }}">Open compare view</a>
   </article>
 </section>

@@ -1,3 +1,4 @@
+"""High-level service that orchestrates AQI + weather fetch and caching."""
 from __future__ import annotations
 
 from urbanair.cache.cache_manager import InMemoryTTLCache
@@ -12,12 +13,15 @@ from urbanair.services.weather_service import WeatherService
 
 
 class SummaryService:
+    """Fetches, merges, and caches the DailySummary for a given city."""
+
     def __init__(self, settings: Settings, cache: InMemoryTTLCache) -> None:
         self.settings = settings
         self.cache = cache
-        self.scoring_service = ScoringService()
+        self._scoring = ScoringService()
 
     async def get_daily_summary(self, city: CityConfig) -> DailySummary:
+        """Return the cached DailySummary for *city*, fetching fresh data if needed."""
         cache_key = f"summary:{city.slug}"
         cached: DailySummary | None = self.cache.get(cache_key)
         if cached is not None:
@@ -27,7 +31,7 @@ class SummaryService:
             settings=self.settings,
             aqi_service=AQIService(self.settings),
             weather_service=WeatherService(self.settings),
-            scoring_service=self.scoring_service,
+            scoring_service=self._scoring,
             activity_service=ActivityService(),
         )
         summary = await insight_service.build_daily_summary(

@@ -1,3 +1,4 @@
+"""Analytics service for tracking client events and telemetry."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -14,6 +15,8 @@ class AnalyticsSnapshot:
 
 
 class AnalyticsService:
+    """Records and aggregates analytics events in SQLite."""
+
     def __init__(self, storage: Storage) -> None:
         self.storage = storage
 
@@ -21,7 +24,7 @@ class AnalyticsService:
         normalized = event_name.strip().lower() or "unknown"
         normalized_city = city_slug.strip().lower() if city_slug else None
         created_at = datetime.now(tz=timezone.utc).isoformat()
-        with self.storage.connect() as connection:
+        with self.storage.session() as connection:
             connection.execute(
                 """
                 INSERT INTO analytics_events (event_name, city_slug, created_at)
@@ -31,10 +34,12 @@ class AnalyticsService:
             )
 
     def snapshot(self) -> AnalyticsSnapshot:
-        with self.storage.connect() as connection:
-            total_events = connection.execute(
+        with self.storage.session() as connection:
+            total_row = connection.execute(
                 "SELECT COUNT(*) AS count FROM analytics_events"
-            ).fetchone()["count"]
+            ).fetchone()
+            total_events = int(total_row["count"]) if total_row else 0
+
             event_rows = connection.execute(
                 """
                 SELECT event_name, COUNT(*) AS count
@@ -55,7 +60,7 @@ class AnalyticsService:
             ).fetchall()
 
         return AnalyticsSnapshot(
-            total_events=int(total_events),
+            total_events=total_events,
             event_counts={row["event_name"]: int(row["count"]) for row in event_rows},
             top_cities=[(row["city_slug"], int(row["count"])) for row in city_rows],
         )

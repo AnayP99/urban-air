@@ -1,3 +1,4 @@
+"""Waitlist persistence service for local demo subscriptions."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -14,6 +15,8 @@ class WaitlistEntry:
 
 
 class WaitlistService:
+    """Manages demo waitlist and alert subscriber entries."""
+
     def __init__(self, storage: Storage) -> None:
         self.storage = storage
 
@@ -21,7 +24,7 @@ class WaitlistService:
         key = email.strip().lower()
         normalized_city = city_slug.strip().lower()
         created_at = datetime.now(tz=timezone.utc)
-        with self.storage.connect() as connection:
+        with self.storage.session() as connection:
             connection.execute(
                 """
                 INSERT INTO waitlist_entries (email, city_slug, created_at)
@@ -35,8 +38,8 @@ class WaitlistService:
         return WaitlistEntry(email=key, city_slug=normalized_city, created_at=created_at)
 
     def count(self) -> int:
-        with self.storage.connect() as connection:
+        with self.storage.session() as connection:
             row = connection.execute(
                 "SELECT COUNT(*) AS count FROM waitlist_entries"
             ).fetchone()
-        return int(row["count"])
+        return int(row["count"]) if row else 0
